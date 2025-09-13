@@ -2,22 +2,17 @@
 	import '../app.css';
 	import { Footer } from '$lib/components/ui/footer';
 
-	import {
-		ClerkProvider,
-		SignedIn,
-		SignedOut,
-		SignInButton,
-		SignOutButton,
-		UserButton
-	} from 'svelte-clerk';
+	import { ClerkProvider, SignedIn, SignedOut, SignInButton, UserButton } from 'svelte-clerk';
 	import { setupConvex, useConvexClient } from 'convex-svelte';
 	import { PUBLIC_CONVEX_URL } from '$env/static/public';
 
 	let { data, children } = $props();
+	let { roles, token } = $derived(data);
+	console.log('roles', roles);
 
 	setupConvex(PUBLIC_CONVEX_URL);
 	const convexClient = useConvexClient();
-	convexClient.setAuth(async () => data.token);
+	convexClient.setAuth(async () => token);
 </script>
 
 <ClerkProvider>
@@ -35,13 +30,19 @@
 									class="border border-black px-10 py-1 hover:bg-black hover:text-white active:bg-white active:text-black"
 									>Home</a
 								>
+								<SignedIn>
+									{#if roles?.includes('admin')}
+										<a
+											href="/admin"
+											class="border border-black px-10 py-1 hover:bg-black hover:text-white active:bg-white active:text-black"
+											>Admin</a
+										>
+									{/if}
+								</SignedIn>
 							</nav>
 
 							<div class="flex justify-end gap-2 text-xs">
 								<SignedIn>
-									<SignOutButton
-										class="cursor-pointer border border-black px-10 py-1 hover:bg-gray-100 hover:bg-red-500 hover:text-white active:bg-white active:text-black"
-									></SignOutButton>
 									<UserButton />
 								</SignedIn>
 								<SignedOut>

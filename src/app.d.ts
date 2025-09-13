@@ -6,6 +6,8 @@
 import type { Security } from "$lib/security";
 import type { ConvexClient } from "convex/browser";
 
+export type Role = 'admin' | 'moderator';
+
 declare global {
 	namespace App {
 		interface Locals {
@@ -19,5 +21,13 @@ declare global {
 		// interface Locals {}
 		// interface PageState {}
 		// interface Platform {}
+	}
+
+	interface CustomJwtSessionClaims {
+		roles: Role[],
+		firstname: string | null,
+		lastname: string | null,
+		fullname: string | null,
+		username: string | null,
 	}
 }

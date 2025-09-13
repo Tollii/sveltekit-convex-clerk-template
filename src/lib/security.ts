@@ -1,5 +1,6 @@
 import { error, redirect, type RequestEvent } from '@sveltejs/kit';
 import type { SignedInAuthObject, SignedOutAuthObject } from '@clerk/backend/internal';
+import type { Role } from '$types';
 
 type SessionAuthObject = SignedInAuthObject | SignedOutAuthObject;
 
@@ -30,7 +31,7 @@ export class Security {
 
         const permitted = this.auth.sessionClaims?.roles.includes(role);
         if (!permitted) {
-            throw error(403, 'missing role: ' + role);
+            throw error(403, `missing role: ${role}`);
         }
         return this;
     }
