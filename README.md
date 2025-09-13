@@ -1,6 +1,6 @@
 # Svelte + Convex + Clerk template
 
-## Probably some stuff missing, but this will get you 90% of the way there
+Probably some stuff missing, but this will get you 90% of the way there
 
 
 ### 1) Create Convex and Clerk projects
