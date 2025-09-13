@@ -1,4 +1,7 @@
-## SoundPantry — Quick Setup (Convex + Clerk)
+# Svelte + Convex + Clerk template
+
+## Probably some stuff missing, but this will get you 90% of the way there
+
 
 ### 1) Create Convex and Clerk projects
 - Create a Convex project in the Convex dashboard.
