@@ -1,38 +1,63 @@
-# sv
+## SoundPantry — Quick Setup (Convex + Clerk)
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+### 1) Create Convex and Clerk projects
+- Create a Convex project in the Convex dashboard.
+- Create a Clerk application in the Clerk dashboard.
 
-## Creating a project
-
-If you're seeing this, you've probably already done this step. Congrats!
-
+### Env vars (set locally in `.env.local` and in Convex cloud)
 ```bash
-# create a new project in the current directory
-npx sv create
-
-# create a new project in my-app
-npx sv create my-app
+CONVEX_DEPLOYMENT=
+PUBLIC_CONVEX_URL=
+PUBLIC_CLERK_FRONTEND_API_URL=
+PUBLIC_CLERK_PUBLISHABLE_KEY=
+CLERK_SECRET_KEY=
+CLERK_WEBHOOK_SECRET=
+CLERK_JWT_ISSUER_DOMAIN=
 ```
 
-## Developing
+### Steps
+1) Create Convex and Clerk projects.
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+2) Clerk → JWT Templates: create using Convex preset, name it `convex`.
 
+3) Clerk → Sessions → Custom claims: add
+```json
+{
+  "roles": "{{user.public_metadata.roles}}",
+  "fullname": "{{user.full_name}}",
+  "lastname": "{{user.last_name}}",
+  "username": "{{user.username}}",
+  "firstname": "{{user.first_name}}"
+}
+```
+
+4) Clerk → Webhooks: subscribe to `user.created`, `user.updated`, `user.deleted`.
+   - URL: `https://<your-convex>.convex.site/clerk-users-webhook` (or local Convex dev URL + `/clerk-users-webhook`).
+   - Copy the webhook secret → set `CLERK_WEBHOOK_SECRET` (local + Convex cloud).
+
+5) Set env vars (see list above).
+   - `CLERK_JWT_ISSUER_DOMAIN`: your Clerk issuer (e.g. `https://<app>.clerk.accounts.dev`).
+
+6) Optional: set user roles in Clerk `unsafe_metadata`:
+```json
+{ "roles": ["admin"] }
+```
+
+7) Import sample data:
 ```bash
-npm run dev
+npx convex import --table tasks sampleData.jsonl
+```
 
-# or start the server and open the app in a new browser tab
+8) Run Convex dev:
+```bash
+npx convex dev
+```
+
+9) Run app:
+```bash
 npm run dev -- --open
 ```
 
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+Notes:
+- Webhook endpoint: `/clerk-users-webhook` (see `src/convex/http.ts`).
+- JWT provider config: `src/convex/auth.config.ts` (`applicationID: "convex"`).
